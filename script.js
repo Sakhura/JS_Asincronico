@@ -88,7 +88,7 @@ tareaPromesa("Descargar", 1500, true)
         btnOk.disabled = false ; btnErr.disabled = false
     })
 
-console.log('out-pr',"⚡ Código síncrono continúa...", 'info')
+log('out-pr',"⚡ Código síncrono continúa...", 'info')
 
 }
 
@@ -133,11 +133,11 @@ log('out-aw', 'Esto se muestra antes de los pasos', 'info')
 //timeline
 
 function animateTimeLine(){
-    const bars = ['tl-sync', 'tl-pr', 'tl-aw']
+    const bars = ['tl-sync', 'tl-cb','tl-pr', 'tl-aw']
     bars.forEach(id=> document.getElementById(id).classList.remove('animate'))
     setTimeout(()=> {
         bars.forEach((id, i) => {
-            setTimeout(() => document.getElementById.classList.add('animate'), i * 180)
+            setTimeout(() => document.getElementById(id).classList.add('animate'), i * 180)
         })
     }, 50)
 }
