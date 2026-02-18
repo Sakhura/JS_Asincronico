@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulación API — Promesas & Async/Await</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="proapi.css">
+
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">EJERCICIO · SIMULACIÓN API</span>
+  <span class="topbar-badge">JS TRAINEE 2026</span>
+</div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="card full header-card">
+    <div class="header-label">EJERCICIO PRÁCTICO</div>
+    <h1>Simulación de una API<br>con <span>Promesas</span> & Async/Await</h1>
+    <p>Peticiones HTTP simuladas con setTimeout. Obtén datos de usuarios de una base de datos ficticia usando Promises y async/await con manejo de errores.</p>
+  </div>
+
+  <!-- BASE DE DATOS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-purple">🗄️</div>
+      <div>
+        <div class="card-title">Base de Datos Ficticia</div>
+        <div class="card-subtitle">tabla: usuarios</div>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <table class="db-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>NOMBRE</th>
+            <th>EMAIL</th>
+            <th>ROL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="id-pill">1</span></td>
+            <td><span class="avatar" style="background:#6366f1;">SM</span>Sebastian Maya</td>
+            <td style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);">sebastian.maya@tucorreo.cl/td>
+            <td><span class="rol-tag rol-admin">Admin</span></td>
+          </tr>
+          <tr>
+            <td><span class="id-pill">2</span></td>
+            <td><span class="avatar" style="background:#0ea5e9;">LP</span>Paulina Villegas</td>
+            <td style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);">paulina.villegas@tucorreo.cl</td>
+            <td><span class="rol-tag rol-editor">Editor</span></td>
+          </tr>
+          <tr>
+            <td><span class="id-pill">3</span></td>
+            <td><span class="avatar" style="background:#10b981;">MT</span>Maximiliano Vilugron</td>
+            <td style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);">Maximiliano.Vilugron@tucorreo.cl</td>
+            <td><span class="rol-tag rol-viewer">Viewer</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BÚSQUEDA + RESULTADO -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-blue">🔍</div>
+      <div>
+        <div class="card-title">Consultar Usuario</div>
+        <div class="card-subtitle">mostrarUsuario(id)</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
+
+      <div class="search-area">
+        <div class="input-group">
+          <input class="input-id" id="inputId" type="text" placeholder="Ingresa un ID..." maxlength="10">
+          <button class="btn-buscar" id="btnBuscar" onclick="buscar()">Consultar →</button>
+        </div>
+        <div>
+          <div class="quick-label">Pruebas rápidas:</div>
+          <div class="quick-btns">
+            <button class="quick-btn" onclick="setId(1)">id: 1 ✅</button>
+            <button class="quick-btn" onclick="setId(2)">id: 2 ✅</button>
+            <button class="quick-btn" onclick="setId(3)">id: 3 ✅</button>
+            <button class="quick-btn err-btn" onclick="setId(99)">id: 99 ❌</button>
+            <button class="quick-btn err-btn" onclick="setId(-5)">id: -5 ❌</button>
+            <button class="quick-btn err-btn" onclick="setId('abc')">id: 'abc' ❌</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Respuesta visual -->
+      <div id="userResult" class="user-result-card"></div>
+      <div id="errorResult" class="error-card">
+        <div class="error-icon">⚠️</div>
+        <div>
+          <div class="error-title">Error capturado por catch</div>
+          <div class="error-msg" id="errorMsg"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESPUESTA HTTP -->
+  <div class="card full">
+    <div class="card-header">
+      <div class="card-icon icon-blue">📡</div>
+      <div>
+        <div class="card-title">Respuesta de la API</div>
+        <div class="card-subtitle">Promise resolve / reject</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+      <div class="response-box">
+        <div class="response-topbar">
+          <span class="resp-method">GET</span>
+          <span class="resp-url" id="respUrl">/api/usuarios/—</span>
+          <span class="resp-status status-idle" id="respStatus">IDLE</span>
+        </div>
+        <div class="response-body" id="respBody">
+          <span style="opacity:0.3">// La respuesta JSON aparecerá aquí...</span>
+        </div>
+      </div>
+
+      <div class="log-area">
+        <div class="log-topbar">
+          <span class="log-dot r"></span>
+          <span class="log-dot y"></span>
+          <span class="log-dot g"></span>
+          <span style="margin-left:0.5rem;">CONSOLA</span>
+          <button class="btn-clear-log" onclick="clearLog()">LIMPIAR</button>
+        </div>
+        <div class="log-entries" id="logEntries">
+          <div class="log-entry"><span class="log-ts">--</span><span class="log-info">// Ejecuta una consulta para ver los logs...</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CÓDIGO FUENTE -->
+  <div class="card full">
+    <div class="card-header">
+      <div class="card-icon icon-green">📄</div>
+      <div>
+        <div class="card-title">Código fuente</div>
+        <div class="card-subtitle">obtenerUsuario() · mostrarUsuario()</div>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <div class="code-area">
+        <div class="code-tabs">
+          <button class="code-tab active" onclick="showTab('tab1', this)">obtenerUsuario.js</button>
+          <button class="code-tab" onclick="showTab('tab2', this)">mostrarUsuario.js</button>
+          <button class="code-tab" onclick="showTab('tab3', this)">base-datos.js</button>
+        </div>
+
+        <div class="code-content active" id="tab1">
+          <pre><span class="cm">// Función que devuelve una Promise</span>
+<span class="kw">function</span> <span class="fn">obtenerUsuario</span>(id) {
+  <span class="kw">return new</span> <span class="hl">Promise</span>((resolve, reject) => {
+
+    <span class="cm">// Validación: id debe ser número y mayor que 0</span>
+    <span class="kw">if</span> (<span class="kw">typeof</span> id !== <span class="str">'number'</span> || id &lt; <span class="num">1</span>) {
+      <span class="fn">reject</span>(<span class="str">`❌ ID inválido: "${id}". Debe ser número ≥ 1`</span>)
+      <span class="kw">return</span>   <span class="cm">// detiene aquí, no ejecuta el setTimeout</span>
+    }
+
+    <span class="cm">// Simula latencia del servidor (1.5 segundos)</span>
+    <span class="fn">setTimeout</span>(() => {
+      <span class="kw">const</span> usuario = usuarios[id]
+
+      <span class="kw">if</span> (usuario) {
+        <span class="fn">resolve</span>(usuario)                    <span class="cm">// ✅ encontrado</span>
+      } <span class="kw">else</span> {
+        <span class="fn">reject</span>(<span class="str">`❌ No existe usuario con id ${id}`</span>) <span class="cm">// ❌ no encontrado</span>
+      }
+    }, <span class="num">1500</span>)
+
+  })
+}</pre>
+        </div>
+
+        <div class="code-content" id="tab2">
+          <pre><span class="cm">// Función async que consume la Promise</span>
+<span class="kw">async function</span> <span class="fn">mostrarUsuario</span>(id) {
+  console.log(<span class="str">`🔍 Buscando usuario con id: ${id}...`</span>)
+
+  <span class="kw">try</span> {
+    <span class="cm">// await pausa aquí hasta que la Promise resuelva</span>
+    <span class="kw">const</span> usuario = <span class="kw">await</span> <span class="fn">obtenerUsuario</span>(id)
+
+    <span class="cm">// Si llegamos aquí → resolve() fue llamado ✅</span>
+    console.log(<span class="str">"✅ Usuario encontrado:"</span>)
+    console.log(<span class="str">`   Nombre: ${usuario.nombre}`</span>)
+    console.log(<span class="str">`   Email : ${usuario.email}`</span>)
+    console.log(<span class="str">`   Rol   : ${usuario.rol}`</span>)
+
+  } <span class="kw">catch</span> (error) {
+    <span class="cm">// Si reject() fue llamado → caemos aquí ❌</span>
+    console.log(error)
+  }
+}</pre>
+        </div>
+
+        <div class="code-content" id="tab3">
+          <pre><span class="cm">// Base de datos ficticia (objeto JavaScript)</span>
+<span class="kw">const</span> usuarios = {
+  <span class="num">1</span>: {
+    id: <span class="num">1</span>,
+    nombre: <span class="str">"Sebastian Maya"</span>,
+    email:  <span class="str">"sebastian.maya@tucorreo.cl"</span>,
+    rol:    <span class="str">"Admin"</span>
+  },
+  <span class="num">2</span>: {
+    id: <span class="num">2</span>,
+    nombre: <span class="str">"Paulina Villegas"</span>,
+    email:  <span class="str">"paulina.villegas@tucorreo.cl"</span>,
+    rol:    <span class="str">"Editor"</span>
+  },
+  <span class="num">3</span>: {
+    id: <span class="num">3</span>,
+    nombre: <span class="str">"Maximiliano Vilugron"</span>,
+    email:  <span class="str">"Maximiliano.Vilugron@tucorreo.cl"</span>,
+    rol:    <span class="str">"Viewer"</span>
+  }
+  <span class="cm">// id 4, 5, 6... → no existen → reject()</span>
+}</pre>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>SIMULACIÓN API · Promesas & Async/Await · JS Trainee 2026 · SR</footer>
+
+<script src="proapi.js"></script>
+
+</body>
+</html>
