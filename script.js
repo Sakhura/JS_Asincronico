@@ -90,5 +90,56 @@ tareaPromesa("Descargar", 1500, true)
 
 console.log('out-pr',"⚡ Código síncrono continúa...", 'info')
 
-
 }
+
+// async / await
+
+async function runAsync() {
+    clearOut('out-aw')
+    const btn = document.getElementById('btn-aw')
+    btn.disabled = true
+    setDo('aw-dot', 'running')
+
+    function esperar(ms){
+        return new Promise(res => setTimeout(res, ms))
+    }
+
+async function procesarDatos() {
+    try{
+        log('out-aw', 'Paso 1 conectando...', 'warn')
+        await esperar(1200)
+        log('out-aw', 'Paso 1 Conexion ok...', 'ok')
+
+        log('out-aw', 'Paso 2 descargando...', 'warn')
+        await esperar(1500)
+        log('out-aw', 'Paso 2 Descarga ok...', 'ok')
+
+        log('out-aw', 'Paso 3 Procesando...', 'warn')
+        await esperar(800)
+        log('out-aw', 'Paso 3 Proceso ok...', 'ok')
+
+        setDo('aw-dot', 'done')
+    }catch (e){
+        log('out-aw', `X Error: ${e}`, 'err')
+        btn.disabled = false
+    }
+}
+
+procesarDatos()
+log('out-aw', 'Esto se muestra antes de los pasos', 'info')
+    
+}
+
+//timeline
+
+function animateTimeLine(){
+    const bars = ['tl-sync', 'tl-pr', 'tl-aw']
+    bars.forEach(id=> document.getElementById(id).classList.remove('animate'))
+    setTimeout(()=> {
+        bars.forEach((id, i) => {
+            setTimeout(() => document.getElementById.classList.add('animate'), i * 180)
+        })
+    }, 50)
+}
+
+window.addEventListener('load', () => setTimeout(animateTimeLine, 600))
